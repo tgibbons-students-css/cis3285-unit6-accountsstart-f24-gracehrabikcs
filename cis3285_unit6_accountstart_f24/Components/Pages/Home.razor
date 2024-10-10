@@ -13,7 +13,7 @@
 <br>
 <br>
 <label for="accountList">Current Accounts:</label>
-<select name="accountList" id="accountList" class="form-control" @bind="selectedAccountName" @bind:event="onchange">
+<select name="accountList" id="accountList" class="form-control" @onchange="UpdateAccountBalance">
     @if (accountList != null && accountList.Count > 0)
     {
         <option value="NoAccountSelected">Select an account</option>
@@ -67,6 +67,30 @@
             accountBalance = acctService.GetAccountBalance(selectedAccountName);
             strAccountBalance = accountBalance.ToString();
         }
+        else
+        {
+            strAccountBalance = "No account selected";
+        }
+    }
+
+    private void UpdateAccountBalance(ChangeEventArgs e)
+    {
+
+        // Get the selected account from the dropdown
+        selectedAccountName = e.Value.ToString();
+        // Ensure a valid account is selected
+        if (selectedAccountName != "NoAccountSelected")
+        {
+            // Get the balance for the selected account using the account service
+            accountBalance = acctService.GetAccountBalance(selectedAccountName);
+
+            // Update the display variable
+            strAccountBalance = accountBalance.ToString("C"); // Formats as currency
+
+            // Notify the UI to refresh with the updated balance
+            StateHasChanged();
+        }
+
         else
         {
             strAccountBalance = "No account selected";
